@@ -37,6 +37,7 @@
             height: 100vh;
         }
 
+        /* Scrollbar Styling */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -55,12 +56,14 @@
             background: var(--accent-blue);
         }
 
+        /* Main Container */
         .container {
             display: flex;
             height: 100vh;
             width: 100%;
         }
 
+        /* Sidebar */
         .sidebar {
             width: 280px;
             background: var(--bg-card);
@@ -98,11 +101,17 @@
             justify-content: center;
             gap: 8px;
         }
+
         .new-chat-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 16px rgba(139, 92, 246, 0.3);
         }
 
+        .new-chat-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Chat History */
         .chat-history {
             flex: 1;
             overflow-y: auto;
@@ -162,6 +171,7 @@
             background: rgba(139, 92, 246, 0.1);
         }
 
+        /* Mobile Toggle */
         .mobile-toggle {
             display: none;
             position: absolute;
@@ -180,6 +190,7 @@
             border-radius: 8px;
         }
 
+        /* Main Content */
         .main-content {
             flex: 1;
             display: flex;
@@ -187,6 +198,7 @@
             position: relative;
         }
 
+        /* Messages Area */
         .messages-container {
             flex: 1;
             overflow-y: auto;
@@ -268,6 +280,7 @@
             color: var(--text-secondary);
         }
 
+        /* Message Styles */
         .message {
             display: flex;
             gap: 12px;
@@ -318,6 +331,7 @@
             margin-top: 4px;
         }
 
+        /* Code Block */
         .code-block {
             background: #0a0a0f;
             border: 1px solid var(--border-color);
@@ -372,6 +386,7 @@
             white-space: pre;
         }
 
+        /* Typing Indicator */
         .typing-indicator {
             display: flex;
             gap: 4px;
@@ -405,6 +420,7 @@
             }
         }
 
+        /* Input Area */
         .input-area {
             padding: 20px;
             border-top: 1px solid var(--border-color);
@@ -505,6 +521,7 @@
             cursor: not-allowed;
         }
 
+        /* Error Message */
         .error-message {
             background: rgba(239, 68, 68, 0.1);
             border: 1px solid var(--error);
@@ -515,6 +532,7 @@
             animation: slideUp 0.3s ease;
         }
 
+        /* Animations */
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -535,6 +553,7 @@
             }
         }
 
+        /* Responsive */
         @media (max-width: 768px) {
             .mobile-toggle {
                 display: flex;
@@ -619,9 +638,10 @@
             }
         }
     </style>
-</head>
-<body>
+    </head>
+    <body>
     <div class="container">
+        <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <button class="new-chat-btn" id="newChatBtn">
@@ -630,7 +650,9 @@
                 </button>
             </div>
 
-            <div class="chat-history" id="chatHistory"></div>
+            <div class="chat-history" id="chatHistory">
+                <!-- Chat items will be dynamically added here -->
+            </div>
 
             <div class="sidebar-footer">
                 <button class="settings-btn" id="settingsBtn">
@@ -639,9 +661,12 @@
             </div>
         </div>
 
+        <!-- Mobile Toggle -->
         <button class="mobile-toggle" id="mobileToggle">☰</button>
 
+        <!-- Main Content -->
         <div class="main-content">
+            <!-- Messages Container -->
             <div class="messages-container" id="messagesContainer">
                 <div class="welcome-section" id="welcomeSection">
                     <h1 class="welcome-title">AI Chatbot</h1>
@@ -671,6 +696,7 @@
                 </div>
             </div>
 
+            <!-- Input Area -->
             <div class="input-area">
                 <div class="input-wrapper">
                     <select class="model-selector" id="modelSelector">
@@ -682,24 +708,27 @@
                         <textarea class="message-input" id="messageInput" placeholder="Type your message... (Shift+Enter for new line)" rows="1"></textarea>
                     </div>
                 </div>
-                <button class="send-btn" id="sendBtn" title="Send message">➤</button>
+                <button class="send-btn" id="sendBtn" title="Send message">
+                    ➤
+                </button>
             </div>
         </div>
     </div>
 
     <script>
-        // ✅ FIXED: Use window.location.origin for correct URL
+        // Configuration
         const API_URL = window.location.origin;
 
         // Elements
         const messagesContainer = document.getElementById('messagesContainer');
-        const messageInput = document.getElementById('messageInput');  // ✅ FIXED: Capital 'I'
+        const messageInput = document.getElementById('messageInput');
         const sendBtn = document.getElementById('sendBtn');
         const modelSelector = document.getElementById('modelSelector');
         const newChatBtn = document.getElementById('newChatBtn');
         const chatHistory = document.getElementById('chatHistory');
         const sidebar = document.getElementById('sidebar');
         const mobileToggle = document.getElementById('mobileToggle');
+        const welcomeSection = document.getElementById('welcomeSection');
 
         // State
         let currentChatId = null;
@@ -714,20 +743,30 @@
             autoResizeTextarea();
         }
 
+        // Event Listeners
         function setupEventListeners() {
             sendBtn.addEventListener('click', sendMessage);
             messageInput.addEventListener('keydown', handleKeyPress);
             messageInput.addEventListener('input', autoResizeTextarea);
             newChatBtn.addEventListener('click', startNewChat);
             mobileToggle.addEventListener('click', toggleSidebar);
+
+            // Feature cards click to start chat
+            document.querySelectorAll('.feature-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    messageInput.focus();
+                });
+            });
         }
 
+        // Auto-resize textarea
         function autoResizeTextarea() {
             messageInput.style.height = '50px';
             const scrollHeight = messageInput.scrollHeight;
             messageInput.style.height = Math.min(scrollHeight, 200) + 'px';
         }
 
+        // Handle keypress
         function handleKeyPress(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -735,25 +774,29 @@
             }
         }
 
+        // Toggle sidebar on mobile
         function toggleSidebar() {
             sidebar.classList.toggle('collapsed');
         }
 
+        // Close sidebar on mobile when selecting chat
         function closeSidebarMobile() {
             if (window.innerWidth <= 768) {
                 sidebar.classList.add('collapsed');
             }
         }
 
-        // ✅ FIXED: Send message - handles JSON response (not streaming)
+        // Send message
         async function sendMessage() {
             const message = messageInput.value.trim();
             if (!message || isLoading) return;
 
+            // Start new chat if needed
             if (!currentChatId) {
                 startNewChat();
             }
 
+            // Add user message
             currentMessages.push({ role: 'user', content: message });
             addMessageToUI('user', message);
 
@@ -762,6 +805,7 @@
             isLoading = true;
             sendBtn.disabled = true;
 
+            // Show typing indicator
             const typingId = addTypingIndicator();
 
             try {
@@ -777,6 +821,7 @@
                     }),
                 });
 
+                // Remove typing indicator
                 removeTypingIndicator(typingId);
 
                 if (!response.ok) {
@@ -784,7 +829,7 @@
                     throw new Error(errorData.error || `API error: ${response.status}`);
                 }
 
-                // ✅ FIXED: Parse JSON response (not streaming)
+                // Parse JSON response
                 const data = await response.json();
                 const aiMessage = data.response;
 
@@ -808,6 +853,7 @@
             }
         }
 
+        // Add message to UI
         function addMessageToUI(role, content) {
             const welcomeSection = document.getElementById('welcomeSection');
             if (welcomeSection) {
@@ -842,12 +888,15 @@
             return messageDiv;
         }
 
+        // Format message with markdown and code blocks
         function formatMessage(content) {
+            // Escape HTML
             let html = content
                 .replace(/&/g, '&amp;')
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;');
 
+            // Code blocks
             html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
                 const language = lang || 'code';
                 const trimmedCode = code.trim();
@@ -860,14 +909,22 @@
                 </div>`;
             });
 
+            // Inline code
             html = html.replace(/`([^`]+)`/g, '<code style="background: rgba(139, 92, 246, 0.2); padding: 2px 6px; border-radius: 3px;">$1</code>');
+
+            // Bold
             html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+            // Italic
             html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+            // Line breaks
             html = html.replace(/\n/g, '<br>');
 
             return html;
         }
 
+        // Copy code block
         window.copyCode = function(btn) {
             const codeContent = btn.closest('.code-block').querySelector('code').textContent;
             navigator.clipboard.writeText(codeContent).then(() => {
@@ -881,6 +938,7 @@
             });
         };
 
+        // Typing indicator
         function addTypingIndicator() {
             const id = 'typing-' + Date.now();
             const messageDiv = document.createElement('div');
@@ -908,6 +966,7 @@
             if (element) element.remove();
         }
 
+        // Show error
         function showError(message) {
             const errorDiv = document.createElement('div');
             errorDiv.className = 'error-message';
@@ -918,13 +977,14 @@
             setTimeout(() => errorDiv.remove(), 5000);
         }
 
+        // Scroll to bottom
         function scrollToBottom() {
             setTimeout(() => {
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
             }, 0);
         }
 
-        // ✅ FIXED: Welcome section handling
+        // Start new chat
         function startNewChat() {
             currentChatId = 'chat-' + Date.now();
             currentMessages = [];
@@ -956,11 +1016,20 @@
                     </div>
                 </div>
             `;
+
+            // Re-attach feature card listeners
+            document.querySelectorAll('.feature-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    messageInput.focus();
+                });
+            });
+
             messageInput.value = '';
             messageInput.style.height = '50px';
             renderChatHistory();
         }
 
+        // Update chat title
         function updateChatTitle() {
             if (currentMessages.length > 0) {
                 const firstMessage = currentMessages[0].content;
@@ -982,6 +1051,7 @@
             }
         }
 
+        // Load chat
         function loadChat(chatId) {
             if (allChats[chatId]) {
                 currentChatId = chatId;
@@ -999,6 +1069,7 @@
             }
         }
 
+        // Render chat history
         function renderChatHistory() {
             chatHistory.innerHTML = '';
 
@@ -1013,6 +1084,7 @@
             });
         }
 
+        // Local Storage
         function saveChatsToStorage() {
             localStorage.setItem('chatbot-chats', JSON.stringify(allChats));
         }
@@ -1025,6 +1097,7 @@
             }
         }
 
+        // Start
         init();
     </script>
 </body>
