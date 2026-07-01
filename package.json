@@ -6,7 +6,12 @@
   "scripts": {
     "start": "node api/chat.js"
   },
-  "keywords": ["ai", "chatbot", "groq", "vercel"],
+  "keywords": [
+    "ai",
+    "chatbot",
+    "groq",
+    "vercel"
+  ],
   "author": "aashumalik784",
   "license": "MIT",
   "dependencies": {},
